@@ -1,15 +1,10 @@
 package com.omnipad.avm.in;
 
 public class CamPose {
-	float camTransX;	// mm
-	float camTransY;	// mm
-	float camHeight;	// mm
-	float downAngle;	// deg
-	float rotateAngle;	// deg
-	float panAngle;		// deg
-	
-	public CamPose() {
-		// TODO Auto-generated constructor stub
-	}
-
+	public float camTransX = 0.0f;		// mm
+	public float camTransY = 0.0f;		// mm
+	public float camHeight = 0.0f;		// mm
+	public float downAngle = 0.0f;		// deg
+	public float rotateAngle = 0.0f;	// deg
+	public float panAngle = 0.0f;		// deg
 }
