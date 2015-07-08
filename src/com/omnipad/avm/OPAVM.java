@@ -85,7 +85,7 @@ public class OPAVM {
 		return 0;
 	}
 	
-	int multiViewApply(int srcW, int srcH, byte[] imgFront, byte[] imgRear, byte[] imgLeft, byte[] imgRight, byte[] imgTop) {
+	int multiViewApply(int w, int h, byte[] imgFront, byte[] imgRear, byte[] imgLeft, byte[] imgRight, byte[] imgTop) {
 		return 0;
 	}
 	
