@@ -1,4 +1,4 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.omnipad.avm.model.CameraData;
 
 public class CameraDataTest {
 

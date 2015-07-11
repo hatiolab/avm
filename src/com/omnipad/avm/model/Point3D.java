@@ -1,4 +1,4 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 public class Point3D {
 	public float x = 0.0f;

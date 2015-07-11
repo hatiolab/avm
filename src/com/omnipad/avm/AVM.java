@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import org.ini4j.Ini;
 
-import com.omnipad.avm.in.CalDatum;
-import com.omnipad.avm.in.CamPose;
-import com.omnipad.avm.in.CameraData;
+import com.omnipad.avm.model.CalDatum;
+import com.omnipad.avm.model.CamPose;
+import com.omnipad.avm.model.CameraData;
 import com.omnipad.avm.out.LUT;
 
 public class AVM {

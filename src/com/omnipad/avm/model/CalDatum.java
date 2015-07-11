@@ -1,4 +1,4 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 public class CalDatum {
 	Point2D[] mkP;	// size 10

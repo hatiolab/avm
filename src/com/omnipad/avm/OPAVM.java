@@ -1,13 +1,13 @@
 package com.omnipad.avm;
 
 import com.omnipad.avm.camera.Camera;
-import com.omnipad.avm.in.CalDatum;
-import com.omnipad.avm.in.CamPose;
-import com.omnipad.avm.in.CameraData;
-import com.omnipad.avm.in.MultiViewData;
-import com.omnipad.avm.in.PGSData;
-import com.omnipad.avm.in.Point2D;
-import com.omnipad.avm.in.SingleViewData;
+import com.omnipad.avm.model.CalDatum;
+import com.omnipad.avm.model.CamPose;
+import com.omnipad.avm.model.CameraData;
+import com.omnipad.avm.model.MultiViewData;
+import com.omnipad.avm.model.PGSData;
+import com.omnipad.avm.model.Point2D;
+import com.omnipad.avm.model.SingleViewData;
 
 public class OPAVM {
 	

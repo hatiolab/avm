@@ -2,9 +2,9 @@ package com.omnipad.avm;
 
 import com.omnipad.avm.camera.Camera;
 import com.omnipad.avm.camera.MaskType;
-import com.omnipad.avm.in.MultiViewData;
-import com.omnipad.avm.in.PGSData;
-import com.omnipad.avm.in.SingleViewData;
+import com.omnipad.avm.model.MultiViewData;
+import com.omnipad.avm.model.PGSData;
+import com.omnipad.avm.model.SingleViewData;
 import com.omnipad.avm.out.LUT;
 import com.omnipad.avm.out.Mask;
 

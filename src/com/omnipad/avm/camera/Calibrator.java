@@ -2,8 +2,8 @@ package com.omnipad.avm.camera;
 
 import java.util.HashMap;
 
-import com.omnipad.avm.in.CalDatum;
-import com.omnipad.avm.in.CameraData;
+import com.omnipad.avm.model.CalDatum;
+import com.omnipad.avm.model.CameraData;
 
 public class Calibrator {
 	boolean autoDetect = false;

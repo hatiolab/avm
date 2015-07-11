@@ -1,4 +1,4 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 public class CamPose {
 	public float camTransX = 0.0f;		// mm

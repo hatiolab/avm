@@ -14,6 +14,12 @@ public class Util {
 		return readCalibInfoInt(buf, 0);
 	}
 
+	public static final int readCalibInfoShort(InputStream is) throws IOException {
+		byte[] buf = new byte[2];
+		is.read(buf);
+		return readCalibInfoShort(buf, 0);
+	}
+
 	public static final float readCalibInfoFloat(InputStream is) throws IOException {
 		byte[] buf = new byte[4];
 		is.read(buf);
@@ -31,6 +37,15 @@ public class Util {
 		os.write(buf);
 	}
 	
+	public static final void writeCalibInfoShort(OutputStream os, short v) throws IOException {
+		byte[] buf = new byte[2];
+		
+		buf[0] = (byte)(0x00FF & v);
+		buf[1] = (byte)(0x00FF & (v >> 8));
+
+		os.write(buf);
+	}
+
 	public static final void writeCalibInfoFloat(OutputStream os, float v) throws IOException {
 		byte[] buf = new byte[4];
 
@@ -59,6 +74,19 @@ public class Util {
 				| ((0x00FF & tmpbuf[1]) << 8)
 				| ((0x00FF & tmpbuf[2]) << 16)
 				| ((0x00FF & tmpbuf[3]) << 24);
+	}
+
+	public static final int readCalibInfoShort(byte[] buf, int offset) {
+		return (0x00FF & buf[offset + 0])
+				| ((0x00FF & buf[offset + 1]) << 8);
+	}
+
+	public static final long readCalibInfoShort(ByteBuffer buf) {
+		byte[] tmpbuf = new byte[2];
+		buf.get(tmpbuf);
+		
+		return (0x00FF & tmpbuf[0])
+				| ((0x00FF & tmpbuf[1]) << 8);
 	}
 
 	public static final void writeCalibInfoInt(int value, byte[] buf, int offset) {

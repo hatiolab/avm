@@ -1,4 +1,4 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;

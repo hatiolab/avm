@@ -1,6 +1,8 @@
-package com.omnipad.avm.in;
+package com.omnipad.avm.model;
 
 import java.io.IOException;
+
+import com.omnipad.avm.model.SingleViewData;
 
 import junit.framework.TestCase;
 

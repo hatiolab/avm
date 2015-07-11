@@ -4,7 +4,7 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.omnipad.avm.in.Point2D;
+import com.omnipad.avm.model.Point2D;
 
 public class LUT {
 	
