@@ -30,4 +30,20 @@ public class Const {
 	public final static int   VIEW_RIGHT_REAR	=	9;
 	public final static int   VIEW_TOTAL		=	10;
 	
+	// FLAG
+	public final static int   HV_ENABLE			=	1;
+	public final static int   HV_POLY			=	32;
+	public final static int   HV_FOV			=		64;
+	public final static int   HV_FLIP_VERTICAL	=	256;
+	public final static int   HV_FLIP_HORIZONTAL	=	512;
+	public final static int   HV_3SECTION		=	4096;
+	public final static int   HV_OVERLAY		=		8192;
+	public final static int   HV_MASK_OVERLAY	=	16384;
+	public final static int   HV_FULLTOPVIEW	=		32768;
+	
+	// pgs
+	public final static int HV_STEER_ANGLE_MIN	=	-40;
+	public final static int HV_STEER_ANGLE_MAX	=	40;
+	public final static int HV_PGS_POINTS_MAX	=	100;
+	
 }

@@ -1,30 +1,35 @@
 package com.omnipad.avm.in;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class PGSData {
-	float tread;
-	float wheelBase;
-	float parkingTrjDist;
-	int steerAngle;
-	int carWidth;
-	int carLength;
-	int carHeight;
-	int rearAxle;
-	int offset;
-	int offsetDistance;
-	Point2D rotCenter;
+	public float tread;
+	public float wheelBase;
+	public float parkingTrjDist;
+	public int steerAngle;
+	public int carWidth;
+	public int carLength;
+	public int carHeight;
+	public int rearAxle;
+	public int offset;
+	public int offsetDistance;
+	public Point2D rotCenter;
 
-	int corrdType;
-	int angle;
-	int points;
-	Point2D pgsWorld;
-	Point2D pgsImage;
-	Point2D pgsView;
+	public int coordType;
+	public int angle;
+	public int points;
+	public Point2D pgsWorld;
+	public Point2D pgsImage;
+	public Point2D pgsView;
 
-	int line;
+	public int line;
+
+	public PGSLine[] pgsLines;
 
 	public PGSData(MultiViewData topPlanerView) {
 		carWidth = topPlanerView.carWidth;
@@ -35,6 +40,27 @@ public class PGSData {
 
 		offset = 0;
 		rearAxle = 0;
+	}
+
+	public PGSData(DataInputStream is) throws IOException {
+		coordType = is.readInt();
+		line = is.readInt();
+		
+		ByteBuffer buffer = ByteBuffer.allocate(60);
+		is.read(buffer.array());
+		
+		IntBuffer intBuffer = buffer.asIntBuffer();
+		
+		for(int i = 0;i < line;i++) {
+			pgsLines[i] = new PGSLine();
+			intBuffer.position(i);
+			pgsLines[i].distance = intBuffer.get();
+			intBuffer.position(i + 5);
+			pgsLines[i].width = intBuffer.get();
+			intBuffer.position(i + 10);
+			pgsLines[i].color = intBuffer.get();
+		}
+		
 	}
 
 	public void store(String path) throws IOException {
