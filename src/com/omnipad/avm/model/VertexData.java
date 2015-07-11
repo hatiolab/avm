@@ -1,5 +1,6 @@
 package com.omnipad.avm.model;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,7 +96,8 @@ public class VertexData {
 
 	public static VertexData load(String path) throws IOException {
 
-		FileInputStream is = new FileInputStream(path);
+		FileInputStream fis = new FileInputStream(path);
+		BufferedInputStream is = new BufferedInputStream(fis, 1024 * 1024);
 
 		VertexData vbo = new VertexData();
 		TLVFormat tlv = null;
