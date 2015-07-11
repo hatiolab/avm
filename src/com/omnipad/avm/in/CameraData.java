@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.omnipad.avm.TLVFormat;
+import com.omnipad.avm.calib.Util;
 
 public class CameraData {
 	public int camID;
@@ -42,48 +44,56 @@ public class CameraData {
 	public CameraData() {
 	}
 	
-	public CameraData(DataInputStream is) throws IOException {
-		f = is.readFloat();
-		mu = is.readFloat();
-		mv = is.readFloat();
-		cx = is.readFloat();
-		cy = is.readFloat();
+	public CameraData(InputStream is) throws IOException {
+		f = Util.readCalibInfoFloat(is);
+		mu = Util.readCalibInfoFloat(is);
+		mv = Util.readCalibInfoFloat(is);
+		cx = Util.readCalibInfoFloat(is);
+		cy = Util.readCalibInfoFloat(is);
 		
 		for(int i = 0;i < k.length;i++)
-			k[i] = is.readFloat();
+			k[i] = Util.readCalibInfoFloat(is);
 
 		for(int i = 0;i < d.length;i++)
-			d[i] = is.readFloat();
+			d[i] = Util.readCalibInfoFloat(is);
 		
-		ssizeWidth = is.readInt();
-		ssizeHeight = is.readInt();
-		offsetX = is.readInt();
-		offsetY = is.readInt();
+		ssizeWidth = Util.readCalibInfoInt(is);
+		ssizeHeight = Util.readCalibInfoInt(is);
+		offsetX = Util.readCalibInfoInt(is);
+		offsetY = Util.readCalibInfoInt(is);
 		
-		camTransX = is.readFloat();
-		camTransY = is.readFloat();
-		camHeight = is.readFloat();
-		downAngle = is.readFloat();
-		panAngle = is.readFloat();
-		rotateAngle = is.readFloat();
+		camTransX = Util.readCalibInfoFloat(is);
+		camTransY = Util.readCalibInfoFloat(is);
+		camHeight = Util.readCalibInfoFloat(is);
+		downAngle = Util.readCalibInfoFloat(is);
+		panAngle = Util.readCalibInfoFloat(is);
+		rotateAngle = Util.readCalibInfoFloat(is);
 		
-		worldCenter.x = is.readInt();
-		worldCenter.y = is.readInt();
-		markerType = is.readInt();		
-		markerLength = is.readInt();
-		numPoints = is.readInt();
+		worldCenter.x = Util.readCalibInfoInt(is);
+		worldCenter.y = Util.readCalibInfoInt(is);
+		markerType = Util.readCalibInfoInt(is);		
+		markerLength = Util.readCalibInfoInt(is);
+		numPoints = Util.readCalibInfoInt(is);
 		
 		// TODO 아래 로직이 원본과 같지 않음 확인 필요. numPoints should be 10.
 		for(int i = 0;i < numPoints;i++) {
 			ipts[i] = new Point2D();
-			ipts[i].x = is.readFloat();
-			ipts[i].y = is.readFloat();
+			ipts[i].x = Util.readCalibInfoFloat(is);
+			ipts[i].y = Util.readCalibInfoFloat(is);
+		}
+		for(int i = 0;i < 10 - numPoints;i++) {
+			Util.readCalibInfoFloat(is);
+			Util.readCalibInfoFloat(is);
 		}
 			
 		for(int i = 0;i < numPoints;i++) {
 			wpts[i] = new Point2D();
-			wpts[i].x = is.readFloat();
-			wpts[i].y = is.readFloat();
+			wpts[i].x = Util.readCalibInfoFloat(is);
+			wpts[i].y = Util.readCalibInfoFloat(is);
+		}
+		for(int i = 0;i < 10 - numPoints;i++) {
+			Util.readCalibInfoFloat(is);
+			Util.readCalibInfoFloat(is);
 		}
 	}
 	

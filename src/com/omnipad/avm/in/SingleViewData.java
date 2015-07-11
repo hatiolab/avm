@@ -5,8 +5,11 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.omnipad.avm.TLVFormat;
+import com.omnipad.avm.calib.Const;
+import com.omnipad.avm.calib.Util;
 
 public class SingleViewData {
 	public int flags;
@@ -39,7 +42,29 @@ public class SingleViewData {
 	public SingleViewData() {
 	}
 
-	public SingleViewData(DataInputStream is) {
+	public SingleViewData(InputStream is) throws IOException {
+		flags = Util.readCalibInfoInt(is);
+		w = Util.readCalibInfoFloat(is);
+		vx = Util.readCalibInfoFloat(is);
+		vy = Util.readCalibInfoFloat(is);
+		tx = Util.readCalibInfoFloat(is);
+		ty = Util.readCalibInfoFloat(is);
+		rot = Util.readCalibInfoFloat(is);
+		sx = Util.readCalibInfoFloat(is);
+		sy = Util.readCalibInfoFloat(is);
+		shx = Util.readCalibInfoFloat(is);
+		shy = Util.readCalibInfoFloat(is);
+		secWidth = Util.readCalibInfoFloat(is);
+
+		offsetY = Util.readCalibInfoInt(is); // TODO 확인 요. 원본 확인.
+		dsizeWidth = Util.readCalibInfoInt(is);
+		dsizeHeight = Util.readCalibInfoInt(is);
+	    dsizeCenter.x = Util.readCalibInfoFloat(is);
+	    dsizeCenter.y = Util.readCalibInfoFloat(is);
+		offsetX = Util.readCalibInfoInt(is);
+		offsetY = Util.readCalibInfoInt(is);
+		
+		flags |= Const.HV_ENABLE;
 	}
 
 	public static SingleViewData load(String path) throws IOException {

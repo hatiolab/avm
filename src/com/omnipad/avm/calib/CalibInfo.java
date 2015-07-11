@@ -1,6 +1,5 @@
 package com.omnipad.avm.calib;
 
-import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -63,53 +62,53 @@ public class CalibInfo {
 	public int setCamViewParams() {
 		return 0;
 	}
-
+	
 	public static final CalibInfo load(String path) throws IOException {
-		FileInputStream fis = new FileInputStream(path);
-		DataInputStream dis = new DataInputStream(fis);
+		FileInputStream is = new FileInputStream(path);
+//		DataInputStream dis = new DataInputStream(fis);
 		
 		CalibInfo info = new CalibInfo();
 
-		while(dis.available() > 0) {
-			int tag = dis.readInt();
-			int len = dis.readInt();
+		while(is.available() > 0) {
+			int tag = Util.readCalibInfoInt(is);
+			int len = Util.readCalibInfoInt(is);
 
 			switch(tag) {
 			case TAG_CAMERA_FRONT:
-				info.cameraData[Const.CAM_FRONT] = new CameraData(dis);
+				info.cameraData[Const.CAM_FRONT] = new CameraData(is);
 				info.cameraData[Const.CAM_FRONT].camID = Const.CAM_FRONT;
 				break;
 			case TAG_CAMERA_REAR:
-				info.cameraData[Const.CAM_REAR] = new CameraData(dis);
+				info.cameraData[Const.CAM_REAR] = new CameraData(is);
 				info.cameraData[Const.CAM_REAR].camID = Const.CAM_REAR;
 				break;
 			case TAG_CAMERA_LEFT:
-				info.cameraData[Const.CAM_LEFT] = new CameraData(dis);
+				info.cameraData[Const.CAM_LEFT] = new CameraData(is);
 				info.cameraData[Const.CAM_LEFT].camID = Const.CAM_LEFT;
 				break;
 			case TAG_CAMERA_RIGHT:
-				info.cameraData[Const.CAM_RIGHT] = new CameraData(dis);
+				info.cameraData[Const.CAM_RIGHT] = new CameraData(is);
 				info.cameraData[Const.CAM_RIGHT].camID = Const.CAM_RIGHT;
 				break;
 			// topview data
 			case TAG_AVM2D_FULL:
-				info.multiViewData[Const.AVM2D_FULL] = new MultiViewData(dis);
+				info.multiViewData[Const.AVM2D_FULL] = new MultiViewData(is);
 				info.multiViewData[Const.AVM2D_FULL].cameraData = info.cameraData;
 				break;
 			case TAG_AVM2D_FRONT:
-				info.multiViewData[Const.AVM2D_FRONT] = new MultiViewData(dis);
+				info.multiViewData[Const.AVM2D_FRONT] = new MultiViewData(is);
 				info.multiViewData[Const.AVM2D_FRONT].cameraData = info.cameraData;
 				break;
 			case TAG_AVM2D_REAR:
-				info.multiViewData[Const.AVM2D_REAR] = new MultiViewData(dis);
+				info.multiViewData[Const.AVM2D_REAR] = new MultiViewData(is);
 				info.multiViewData[Const.AVM2D_REAR].cameraData = info.cameraData;
 				break;
 			case TAG_AVM2D_LS:
-				info.multiViewData[Const.AVM2D_LS] = new MultiViewData(dis);
+				info.multiViewData[Const.AVM2D_LS] = new MultiViewData(is);
 				info.multiViewData[Const.AVM2D_LS].cameraData = info.cameraData;
 				break;
 			case TAG_AVM2D_SLD:
-				info.multiViewData[Const.AVM2D_SLD] = new MultiViewData(dis);
+				info.multiViewData[Const.AVM2D_SLD] = new MultiViewData(is);
 				info.multiViewData[Const.AVM2D_SLD].cameraData = info.cameraData;
 				break;
 			// mask data
@@ -121,52 +120,52 @@ public class CalibInfo {
 				break;
 			// camview data
 			case TAG_VIEW_FRONT:
-				info.singleViewData[Const.VIEW_FRONT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_FRONT] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_FRONT].cameraData = info.cameraData[Const.CAM_FRONT];
 				break;
 			case TAG_VIEW_FRONT_FULL:
-				info.singleViewData[Const.VIEW_FRONT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_FRONT_FULL] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_FRONT_FULL].cameraData = info.cameraData[Const.CAM_FRONT];
 				break;
 			case TAG_VIEW_REAR:
-				info.singleViewData[Const.VIEW_REAR] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_REAR] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_REAR].cameraData = info.cameraData[Const.CAM_REAR];
 				break;
 			case TAG_VIEW_REAR_FULL:
-				info.singleViewData[Const.VIEW_REAR_FULL] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_REAR_FULL] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_REAR_FULL].cameraData = info.cameraData[Const.CAM_REAR];
 				break;
 			case TAG_VIEW_LEFT:
-				info.singleViewData[Const.VIEW_LEFT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_LEFT] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_LEFT].cameraData = info.cameraData[Const.CAM_LEFT];
 				break;
 			case TAG_VIEW_LEFT_FRONT:
-				info.singleViewData[Const.VIEW_LEFT_FRONT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_LEFT_FRONT] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_LEFT_FRONT].cameraData = info.cameraData[Const.CAM_LEFT];
 				break;
 			case TAG_VIEW_LEFT_REAR:
-				info.singleViewData[Const.VIEW_LEFT_REAR] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_LEFT_REAR] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_LEFT_REAR].cameraData = info.cameraData[Const.CAM_LEFT];
 				break;
 			case TAG_VIEW_RIGHT:
-				info.singleViewData[Const.VIEW_RIGHT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_RIGHT] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_RIGHT].cameraData = info.cameraData[Const.CAM_RIGHT];
 				break;
 			case TAG_VIEW_RIGHT_FRONT:
-				info.singleViewData[Const.VIEW_RIGHT_FRONT] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_RIGHT_FRONT] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_RIGHT_FRONT].cameraData = info.cameraData[Const.CAM_RIGHT];
 				break;
 			case TAG_VIEW_RIGHT_REAR:
-				info.singleViewData[Const.VIEW_RIGHT_REAR] = new SingleViewData(dis);
+				info.singleViewData[Const.VIEW_RIGHT_REAR] = new SingleViewData(is);
 				info.singleViewData[Const.VIEW_RIGHT_REAR].cameraData = info.cameraData[Const.CAM_RIGHT];
 				break;
 			// pgs data
 			case TAG_STATIC_PG_DATA:
-				info.pgsData[0] = new PGSData(dis);
+				info.pgsData[0] = new PGSData(is);
 				break;
 
 			case TAG_DYNAMIC_PG_DATA:
-				info.pgsData[1] = new PGSData(dis);
+				info.pgsData[1] = new PGSData(is);
 				break;			
 			}
 		}
@@ -174,7 +173,7 @@ public class CalibInfo {
 		// car_length
 		for(int i = 0; i < Const.VIEW_TOTAL; i++) {
 			SingleViewData sdata = info.singleViewData[i];
-			if((sdata.flags & Const.HV_ENABLE) > 0) {
+			if(sdata != null && (sdata.flags & Const.HV_ENABLE) > 0) {
 				sdata.carWidth = info.multiViewData[0].carWidth;
 				sdata.carLength = info.multiViewData[0].carLength;
 			}
@@ -183,6 +182,8 @@ public class CalibInfo {
 		// pgs_data
 		for(int i = 0; i < 2; i++){
 			PGSData pgs = info.pgsData[i];
+			if(pgs == null)
+				continue;
 			pgs.carWidth  = info.multiViewData[0].carWidth;
 			pgs.carLength = info.multiViewData[0].carLength;
 			pgs.carHeight = info.multiViewData[0].carHeight;
@@ -193,7 +194,7 @@ public class CalibInfo {
 			pgs.points = Const.HV_PGS_POINTS_MAX;
 		}
 		
-		fis.close();
+		is.close();
 		
 		return info;
 	}

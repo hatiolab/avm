@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.omnipad.avm.TLVFormat;
+import com.omnipad.avm.calib.Util;
 
 public class MultiViewData {
 	public int flags = 0;	// interpolation method (0: none, 1: bilinear, 2: bicubic)
@@ -36,7 +38,7 @@ public class MultiViewData {
 	public float mmPerPixel = 0.0f;	// 출력 영상 단위 픽셀 당 공간해상도
 
 	// 3D AVM
-	public float[] options;	// size 10, 0:BOWL_X, 1:BOWL_Y, 2:BOWL_Z, 3:BOWL_R, 4:Blend
+	public float[] options = new float[10];	// size 10, 0:BOWL_X, 1:BOWL_Y, 2:BOWL_Z, 3:BOWL_R, 4:Blend
 	
 	public CameraData[] cameraData;
 	
@@ -44,38 +46,38 @@ public class MultiViewData {
 		dsizeCenter = new Point2D();
 	}
 	
-	public MultiViewData(DataInputStream is) throws IOException {
-		flags = is.readInt();
-		carWidth = is.readInt();
-		carLength = is.readInt();
-		carHeight = is.readInt();
-		carWheelBase = is.readInt();
-		carTread = is.readInt();
+	public MultiViewData(InputStream is) throws IOException {
+		flags = Util.readCalibInfoInt(is);
+		carWidth = Util.readCalibInfoInt(is);
+		carLength = Util.readCalibInfoInt(is);
+		carHeight = Util.readCalibInfoInt(is);
+		carWheelBase = Util.readCalibInfoInt(is);
+		carTread = Util.readCalibInfoInt(is);
 		
-		maskFfov = is.readFloat();
-		maskRfov = is.readFloat();
-		maskBlend = is.readFloat();
-		maskColor = is.readInt();
-		maskWidth = is.readInt();
-		maskType = is.readInt();
+		maskFfov = Util.readCalibInfoFloat(is);
+		maskRfov = Util.readCalibInfoFloat(is);
+		maskBlend = Util.readCalibInfoFloat(is);
+		maskColor = Util.readCalibInfoInt(is);
+		maskWidth = Util.readCalibInfoInt(is);
+		maskType = Util.readCalibInfoInt(is);
 		
 		// mask car position
-		options[0] = is.readFloat(); // top
-		options[1] = is.readFloat(); // left
-		options[2] = is.readFloat(); // right
-		options[3] = is.readFloat(); // bottom
+		options[0] = Util.readCalibInfoFloat(is); // top
+		options[1] = Util.readCalibInfoFloat(is); // left
+		options[2] = Util.readCalibInfoFloat(is); // right
+		options[3] = Util.readCalibInfoFloat(is); // bottom
 		
-		mmPerPixel = is.readFloat();
+		mmPerPixel = Util.readCalibInfoFloat(is);
 
-		offsetY = is.readInt(); // TODO 확인할 것. - 원본.
+		offsetY = Util.readCalibInfoInt(is); // TODO 확인할 것. - 원본.
 
-		dsizeWidth = is.readInt();
-		dsizeHeight = is.readInt();
-		dsizeCenter.x = is.readFloat();
-		dsizeCenter.y = is.readFloat();
+		dsizeWidth = Util.readCalibInfoInt(is);
+		dsizeHeight = Util.readCalibInfoInt(is);
+		dsizeCenter.x = Util.readCalibInfoFloat(is);
+		dsizeCenter.y = Util.readCalibInfoFloat(is);
 		
-		offsetX = is.readInt();
-		offsetY = is.readInt();
+		offsetX = Util.readCalibInfoInt(is);
+		offsetY = Util.readCalibInfoInt(is);
 }
 
 	public static MultiViewData load(String path) throws IOException {
