@@ -1,14 +1,11 @@
-package com.omnipad.avm.calib;
+package com.omnipad.avm.model;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.omnipad.avm.Const;
 import com.omnipad.avm.TLVFormat;
-import com.omnipad.avm.model.CameraData;
-import com.omnipad.avm.model.MultiViewData;
-import com.omnipad.avm.model.PGSData;
-import com.omnipad.avm.model.SingleViewData;
 
 public class CalibInfo {
 	// Tags

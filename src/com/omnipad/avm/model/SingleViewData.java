@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.omnipad.avm.Const;
 import com.omnipad.avm.TLVFormat;
-import com.omnipad.avm.calib.Const;
 
 public class SingleViewData {
 	public int flags;
