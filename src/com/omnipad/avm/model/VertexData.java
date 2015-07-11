@@ -96,8 +96,7 @@ public class VertexData {
 
 	public static VertexData load(String path) throws IOException {
 
-		FileInputStream fis = new FileInputStream(path);
-		BufferedInputStream is = new BufferedInputStream(fis, 1024 * 1024);
+		FileInputStream is = new FileInputStream(path);
 
 		VertexData vbo = new VertexData();
 		TLVFormat tlv = null;
@@ -129,8 +128,7 @@ public class VertexData {
 				}
 
 				vbo.vertices = new float[tlv.len / 4];
-				for (int i = 0; i < vbo.vertices.length; i++)
-					vbo.vertices[i] = bb.getFloat();
+				bb.asFloatBuffer().get(vbo.vertices);
 				break;
 			
 			case TAG_IBO_DATA:
@@ -140,8 +138,7 @@ public class VertexData {
 				}
 
 				vbo.indices = new short[tlv.len / 2];
-				for (int i = 0; i < vbo.indices.length; i++)
-					vbo.indices[i] = bb.getShort();
+				bb.asShortBuffer().get(vbo.indices);
 				break;
 
 			case TAG_MSK_DATA:
