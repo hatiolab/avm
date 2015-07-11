@@ -14,7 +14,7 @@ public class Util {
 		return readCalibInfoInt(buf, 0);
 	}
 
-	public static final int readCalibInfoShort(InputStream is) throws IOException {
+	public static final short readCalibInfoShort(InputStream is) throws IOException {
 		byte[] buf = new byte[2];
 		is.read(buf);
 		return readCalibInfoShort(buf, 0);
@@ -76,9 +76,9 @@ public class Util {
 				| ((0x00FF & tmpbuf[3]) << 24);
 	}
 
-	public static final int readCalibInfoShort(byte[] buf, int offset) {
-		return (0x00FF & buf[offset + 0])
-				| ((0x00FF & buf[offset + 1]) << 8);
+	public static final short readCalibInfoShort(byte[] buf, int offset) {
+		return (short)((0x00FF & buf[offset + 0])
+				| ((0x00FF & buf[offset + 1]) << 8));
 	}
 
 	public static final long readCalibInfoShort(ByteBuffer buf) {

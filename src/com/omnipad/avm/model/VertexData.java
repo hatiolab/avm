@@ -125,7 +125,7 @@ public class VertexData {
 				
 				vbo.indices = new short[len / 2];
 				for(int i = 0;i < vbo.indices.length;i++)
-					vbo.vertices[i] = Util.readCalibInfoShort(is);
+					vbo.indices[i] = Util.readCalibInfoShort(is);
 				break;
 			case TAG_MSK_DATA:
 				if(len != vbo.viewHeight * calcWidthByte(vbo.viewWidth, 24)) {  // BYTES_PER_SHORT
