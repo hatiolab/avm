@@ -1,8 +1,9 @@
 package com.omnipad.avm.model;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import com.omnipad.avm.TLVFormat;
 
 public class PGSData {
 	public float tread;
@@ -39,7 +40,7 @@ public class PGSData {
 		rearAxle = 0;
 	}
 
-	public PGSData(ByteBuffer buf) throws IOException {
+	public PGSData(ByteBuffer buf) {
 		coordType = buf.getInt();
 		line = buf.getInt();
 		
@@ -59,4 +60,24 @@ public class PGSData {
 		
 	}
 
+	public byte[] getBytes() {
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		buf.order(TLVFormat.order);
+		
+		buf.putInt(coordType);
+		buf.putInt(line);
+
+		for(int i = 0;i < 5;i++)
+			buf.putInt(pgsLines[i].distance);
+		for(int i = 0;i < 5;i++)
+			buf.putInt(pgsLines[i].width);
+		for(int i = 0;i < 5;i++)
+			buf.putInt(pgsLines[i].color);
+
+		byte[] ret = new byte[buf.position()];
+		
+		System.arraycopy(buf.array(), 0, ret, 0, ret.length);
+		
+		return ret;	}
+	
 }

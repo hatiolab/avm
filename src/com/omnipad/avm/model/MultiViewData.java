@@ -1,9 +1,5 @@
 package com.omnipad.avm.model;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.omnipad.avm.TLVFormat;
@@ -44,7 +40,7 @@ public class MultiViewData {
 		dsizeCenter = new Point2D();
 	}
 	
-	public MultiViewData(ByteBuffer buf) throws IOException {
+	public MultiViewData(ByteBuffer buf) {
 		flags = buf.getInt();
 		carWidth = buf.getInt();
 		carLength = buf.getInt();
@@ -78,64 +74,47 @@ public class MultiViewData {
 		offsetY = buf.getInt();
 	}
 
-	// FIXME
-	public static MultiViewData load(String path) throws IOException {
-		FileInputStream fis = new FileInputStream(path);
+	public byte[] getBytes() {
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		buf.order(TLVFormat.order);
 		
-		MultiViewData data = new MultiViewData();
+		
+		buf.putInt(flags);
+		buf.putInt(carWidth);
+		buf.putInt(carLength);
+		buf.putInt(carHeight);
+		buf.putInt(carWheelBase);
+		buf.putInt(carTread);
 
-		data.flags = TLVFormat.readTLV(fis).getIntValue();
-		data.carWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.carLength = TLVFormat.readTLV(fis).getIntValue();
-		data.carHeight = TLVFormat.readTLV(fis).getIntValue();
-		data.carTread = TLVFormat.readTLV(fis).getIntValue();
-		data.carWheelBase = TLVFormat.readTLV(fis).getIntValue();
+		buf.putFloat(maskFfov);
+		buf.putFloat(maskRfov);
+		buf.putFloat(maskBlend);
 		
-		data.maskFfov = TLVFormat.readTLV(fis).getFloatValue();
-		data.maskRfov = TLVFormat.readTLV(fis).getFloatValue();
-		data.maskBlend = TLVFormat.readTLV(fis).getFloatValue();
-		data.maskWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.maskType = TLVFormat.readTLV(fis).getIntValue();
-		
-		data.dsizeWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.dsizeHeight = TLVFormat.readTLV(fis).getIntValue();
-		data.dsizeCenter.x = TLVFormat.readTLV(fis).getFloatValue();
-		data.dsizeCenter.y = TLVFormat.readTLV(fis).getFloatValue();
-		
-		data.mmPerPixel = TLVFormat.readTLV(fis).getFloatValue();
-		
-		data.offsetX = TLVFormat.readTLV(fis).getIntValue();
-		data.offsetY = TLVFormat.readTLV(fis).getIntValue();
+		buf.putInt(maskColor);
+		buf.putInt(maskWidth);
+		buf.putInt(maskType);
 
-	    fis.close();
+		buf.putFloat(options[0]);
+		buf.putFloat(options[1]);
+		buf.putFloat(options[2]);
+		buf.putFloat(options[3]);
 		
-		return data;
-	}
-	
-	// FIXME
-	public void store(String path) throws IOException {
-		FileOutputStream fos = new FileOutputStream(path);
-		DataOutputStream dos = new DataOutputStream(fos);
+		buf.putFloat(mmPerPixel);
+		
+		buf.putInt(offsetY);
+		buf.putInt(dsizeWidth);
+		buf.putInt(dsizeHeight);
 
-		TLVFormat.write(dos, 1, flags);
-		TLVFormat.write(dos, 2, carWidth);
-		TLVFormat.write(dos, 3, carLength);
-		TLVFormat.write(dos, 4, carHeight);
-		TLVFormat.write(dos, 5, carTread);
-		TLVFormat.write(dos, 6, carWheelBase);
-		TLVFormat.write(dos, 7, maskFfov);
-		TLVFormat.write(dos, 8, maskRfov);
-		TLVFormat.write(dos, 9, maskBlend);
-		TLVFormat.write(dos, 10, maskWidth);
-		TLVFormat.write(dos, 11, maskType);
-		TLVFormat.write(dos, 12, dsizeWidth);
-		TLVFormat.write(dos, 13, dsizeHeight);
-		TLVFormat.write(dos, 14, dsizeCenter.x);
-		TLVFormat.write(dos, 15, dsizeCenter.y);
-		TLVFormat.write(dos, 16, mmPerPixel);
-		TLVFormat.write(dos, 17, offsetX);
-		TLVFormat.write(dos, 18, offsetY);
+		buf.putFloat(dsizeCenter.x);
+		buf.putFloat(dsizeCenter.y);
+
+		buf.putInt(offsetX);
+		buf.putInt(offsetY);
+
+		byte[] ret = new byte[buf.position()];
 		
-		dos.close();
+		System.arraycopy(buf.array(), 0, ret, 0, ret.length);
+		
+		return ret;	
 	}
 }

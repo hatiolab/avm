@@ -1,8 +1,5 @@
 package com.omnipad.avm.model;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.omnipad.avm.TLVFormat;
@@ -41,7 +38,7 @@ public class CameraData {
 	public CameraData() {
 	}
 	
-	public CameraData(ByteBuffer buf) throws IOException {
+	public CameraData(ByteBuffer buf) {
 
 		f = buf.getFloat();
 		mu = buf.getFloat();
@@ -67,8 +64,8 @@ public class CameraData {
 		panAngle = buf.getFloat();
 		rotateAngle = buf.getFloat();
 		
-		worldCenter.x = buf.getInt();
-		worldCenter.y = buf.getInt();
+		worldCenter.x = buf.getFloat();
+		worldCenter.y = buf.getFloat();
 		markerType = buf.getInt();		
 		markerLength = buf.getInt();
 		numPoints = buf.getInt();
@@ -95,80 +92,63 @@ public class CameraData {
 		}
 	}
 	
-	// FIXME
-	public static CameraData load(String path) throws IOException {
-		FileInputStream fis = new FileInputStream(path);
+	public byte[] getBytes() {
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		buf.order(TLVFormat.order);
 		
-		CameraData data = new CameraData();
+		buf.putFloat(f);
+		buf.putFloat(mu);
+		buf.putFloat(mv);
+		buf.putFloat(cx);
+		buf.putFloat(cy);
 
-		data.f = TLVFormat.readTLV(fis).getFloatValue();
-		data.mu = TLVFormat.readTLV(fis).getFloatValue();
-		data.mv = TLVFormat.readTLV(fis).getFloatValue();
-		data.cx = TLVFormat.readTLV(fis).getFloatValue();
-		data.cy = TLVFormat.readTLV(fis).getFloatValue();
-		data.k[0] = TLVFormat.readTLV(fis).getFloatValue();
-		data.k[1] = TLVFormat.readTLV(fis).getFloatValue();
-		data.k[2] = TLVFormat.readTLV(fis).getFloatValue();
-		data.k[3] = TLVFormat.readTLV(fis).getFloatValue();
-		data.k[4] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[0] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[1] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[2] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[3] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[4] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[5] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[6] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[7] = TLVFormat.readTLV(fis).getFloatValue();
-		data.d[8] = TLVFormat.readTLV(fis).getFloatValue();
-		
-		data.ssizeWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.ssizeHeight = TLVFormat.readTLV(fis).getIntValue();
-		data.offsetX = TLVFormat.readTLV(fis).getIntValue();
-		data.offsetY = TLVFormat.readTLV(fis).getIntValue();
+		for(int i = 0;i < k.length;i++)
+			buf.putFloat(k[i]);
 
-		data.worldCenter.x = TLVFormat.readTLV(fis).getIntValue();
-		data.worldCenter.y = TLVFormat.readTLV(fis).getIntValue();
-		data.markerLength = TLVFormat.readTLV(fis).getIntValue();
-		data.markerType = TLVFormat.readTLV(fis).getIntValue();
+		for(int i = 0;i < d.length;i++)
+			buf.putFloat(d[i]);
 
-		fis.close();
+		buf.putInt(ssizeWidth);
+		buf.putInt(ssizeHeight);
+		buf.putInt(offsetX);
+		buf.putInt(offsetY);
 		
-		return data;
-	}
-	
-	// FIXME
-	public void store(String path) throws IOException {
-		FileOutputStream fos = new FileOutputStream(path);
+		buf.putFloat(camTransX);
+		buf.putFloat(camTransY);
+		buf.putFloat(camHeight);
+		buf.putFloat(downAngle);
+		buf.putFloat(panAngle);
+		buf.putFloat(rotateAngle);
 
-		TLVFormat.write(fos, 1, f);
-		TLVFormat.write(fos, 2, mu);
-		TLVFormat.write(fos, 3, mv);
-		TLVFormat.write(fos, 4, cx);
-		TLVFormat.write(fos, 5, cy);
-		TLVFormat.write(fos, 6, k[0]);
-		TLVFormat.write(fos, 7, k[1]);
-		TLVFormat.write(fos, 8, k[2]);
-		TLVFormat.write(fos, 9, k[3]);
-		TLVFormat.write(fos, 10, k[4]);
-		TLVFormat.write(fos, 11, d[0]);
-		TLVFormat.write(fos, 12, d[1]);
-		TLVFormat.write(fos, 13, d[2]);
-		TLVFormat.write(fos, 14, d[3]);
-		TLVFormat.write(fos, 15, d[4]);
-		TLVFormat.write(fos, 16, d[5]);
-		TLVFormat.write(fos, 17, d[6]);
-		TLVFormat.write(fos, 18, d[7]);
-		TLVFormat.write(fos, 19, d[8]);
-		TLVFormat.write(fos, 20, ssizeWidth);
-		TLVFormat.write(fos, 21, ssizeHeight);
-		TLVFormat.write(fos, 22, offsetX);
-		TLVFormat.write(fos, 23, offsetY);
+		buf.putFloat(worldCenter.x);
+		buf.putFloat(worldCenter.y);
+		buf.putInt(markerType);
+		buf.putInt(markerLength);
+		buf.putInt(numPoints);
 		
-		TLVFormat.write(fos, 24, worldCenter.x);
-		TLVFormat.write(fos, 25, worldCenter.y);
-		TLVFormat.write(fos, 26, markerLength);
-		TLVFormat.write(fos, 27, markerType);
+		// TODO 아래 로직이 원본과 같지 않음 확인 필요. numPoints should be 10.
+		for(int i = 0;i < numPoints;i++) {
+			buf.putFloat(ipts[i].x);
+			buf.putFloat(ipts[i].y);
+		}
+		for(int i = 0;i < 10 - numPoints;i++) {
+			buf.putFloat(0.f);
+			buf.putFloat(0.f);
+		}
+			
+		for(int i = 0;i < numPoints;i++) {
+			buf.putFloat(wpts[i].x);
+			buf.putFloat(wpts[i].y);
+		}
+		for(int i = 0;i < 10 - numPoints;i++) {
+			buf.putFloat(0.f);
+			buf.putFloat(0.f);
+		}
 		
-		fos.close();
+		byte[] ret = new byte[buf.position()];
+		
+		System.arraycopy(buf.array(), 0, ret, 0, ret.length);
+		
+		return ret;
 	}
 }

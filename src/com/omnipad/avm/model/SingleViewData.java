@@ -1,9 +1,5 @@
 package com.omnipad.avm.model;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.omnipad.avm.Const;
@@ -40,7 +36,7 @@ public class SingleViewData {
 	public SingleViewData() {
 	}
 
-	public SingleViewData(ByteBuffer buf) throws IOException {
+	public SingleViewData(ByteBuffer buf) {
 		flags = buf.getInt();
 		w = buf.getFloat();
 		vx = buf.getFloat();
@@ -65,65 +61,39 @@ public class SingleViewData {
 		flags |= Const.HV_ENABLE;
 	}
 
-	// FIXME
-	public static SingleViewData load(String path) throws IOException {
-		FileInputStream fis = new FileInputStream(path);
+	public byte[] getBytes() {
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		buf.order(TLVFormat.order);
 		
-		SingleViewData data = new SingleViewData();
+		buf.putInt(flags);
 
-		data.flags = TLVFormat.readTLV(fis).getIntValue();
-		data.w = TLVFormat.readTLV(fis).getFloatValue();
-		data.vx = TLVFormat.readTLV(fis).getFloatValue();
-		data.vy = TLVFormat.readTLV(fis).getFloatValue();
-		data.tx = TLVFormat.readTLV(fis).getFloatValue();
-		data.ty = TLVFormat.readTLV(fis).getFloatValue();
-		data.rot = TLVFormat.readTLV(fis).getFloatValue();
-		data.sx = TLVFormat.readTLV(fis).getFloatValue();
-		data.sy = TLVFormat.readTLV(fis).getFloatValue();
-		data.shx = TLVFormat.readTLV(fis).getFloatValue();
-		data.shy = TLVFormat.readTLV(fis).getFloatValue();
-		data.secWidth = TLVFormat.readTLV(fis).getFloatValue();
+		buf.putFloat(w);
+		buf.putFloat(vx);
+		buf.putFloat(vy);
+		buf.putFloat(tx);
+		buf.putFloat(ty);
+		buf.putFloat(rot);
+		buf.putFloat(sx);
+		buf.putFloat(sy);
+		buf.putFloat(shx);
+		buf.putFloat(shy);
+		buf.putFloat(secWidth);
 
-		data.dsizeWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.dsizeHeight = TLVFormat.readTLV(fis).getIntValue();
-		data.offsetX = TLVFormat.readTLV(fis).getIntValue();
-		data.offsetY = TLVFormat.readTLV(fis).getIntValue();
-		data.carWidth = TLVFormat.readTLV(fis).getIntValue();
-		data.carLength = TLVFormat.readTLV(fis).getIntValue();
+		buf.putInt(offsetY);
+		buf.putInt(dsizeWidth);
+		buf.putInt(dsizeHeight);
 
-	    data.dsizeCenter.x = data.dsizeWidth * 0.5f;
-	    data.dsizeCenter.y = data.dsizeHeight * 0.5f;
+		buf.putFloat(dsizeCenter.x);
+		buf.putFloat(dsizeCenter.y);
 
-	    fis.close();
+		buf.putInt(offsetX);
+		buf.putInt(offsetY);
+
+		byte[] ret = new byte[buf.position()];
 		
-		return data;
+		System.arraycopy(buf.array(), 0, ret, 0, ret.length);
+		
+		return ret;
 	}
-	
-	// FIXME
-	public void store(String path) throws IOException {
-		FileOutputStream fos = new FileOutputStream(path);
-		DataOutputStream dos = new DataOutputStream(fos);
 
-		TLVFormat.write(dos, 1, flags);
-		TLVFormat.write(dos, 2, w);
-		TLVFormat.write(dos, 3, vx);
-		TLVFormat.write(dos, 4, vy);
-		TLVFormat.write(dos, 5, tx);
-		TLVFormat.write(dos, 6, ty);
-		TLVFormat.write(dos, 7, rot);
-		TLVFormat.write(dos, 8, sx);
-		TLVFormat.write(dos, 9, sy);
-		TLVFormat.write(dos, 10, shx);
-		TLVFormat.write(dos, 11, shy);
-		TLVFormat.write(dos, 12, secWidth);
-
-		TLVFormat.write(dos, 13, dsizeWidth);
-		TLVFormat.write(dos, 14, dsizeHeight);
-		TLVFormat.write(dos, 15, offsetX);
-		TLVFormat.write(dos, 16, offsetY);
-		TLVFormat.write(dos, 17, carWidth);
-		TLVFormat.write(dos, 18, carLength);
-		
-		dos.close();
-	}
 }
