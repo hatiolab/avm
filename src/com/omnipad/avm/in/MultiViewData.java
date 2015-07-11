@@ -38,11 +38,45 @@ public class MultiViewData {
 	// 3D AVM
 	public float[] options;	// size 10, 0:BOWL_X, 1:BOWL_Y, 2:BOWL_Z, 3:BOWL_R, 4:Blend
 	
-	CameraData cameraData;
+	public CameraData[] cameraData;
 	
 	public MultiViewData() {
 		dsizeCenter = new Point2D();
 	}
+	
+	public MultiViewData(DataInputStream is) throws IOException {
+		flags = is.readInt();
+		carWidth = is.readInt();
+		carLength = is.readInt();
+		carHeight = is.readInt();
+		carWheelBase = is.readInt();
+		carTread = is.readInt();
+		
+		maskFfov = is.readFloat();
+		maskRfov = is.readFloat();
+		maskBlend = is.readFloat();
+		maskColor = is.readInt();
+		maskWidth = is.readInt();
+		maskType = is.readInt();
+		
+		// mask car position
+		options[0] = is.readFloat(); // top
+		options[1] = is.readFloat(); // left
+		options[2] = is.readFloat(); // right
+		options[3] = is.readFloat(); // bottom
+		
+		mmPerPixel = is.readFloat();
+
+		offsetY = is.readInt(); // TODO 확인할 것. - 원본.
+
+		dsizeWidth = is.readInt();
+		dsizeHeight = is.readInt();
+		dsizeCenter.x = is.readFloat();
+		dsizeCenter.y = is.readFloat();
+		
+		offsetX = is.readInt();
+		offsetY = is.readInt();
+}
 
 	public static MultiViewData load(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);

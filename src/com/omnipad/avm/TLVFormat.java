@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class TLVFormat {
+	int tag;
+	int len;
 	
 	public static void write(DataOutputStream os, int tag, int value) throws IOException {
 		os.writeInt(tag);

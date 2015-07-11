@@ -34,9 +34,12 @@ public class SingleViewData {
 	
 	public float mmPerPixel;	// 출력 영상 단위 픽셀 당 공간해상도
 	
-	CameraData cameraData;
+	public CameraData cameraData;
 	
 	public SingleViewData() {
+	}
+
+	public SingleViewData(DataInputStream is) {
 	}
 
 	public static SingleViewData load(String path) throws IOException {
