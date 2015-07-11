@@ -1,14 +1,12 @@
 package com.omnipad.avm.model;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import com.omnipad.avm.TLVFormat;
-import com.omnipad.avm.calib.Util;
 
 public class MultiViewData {
 	public int flags = 0;	// interpolation method (0: none, 1: bilinear, 2: bicubic)
@@ -46,74 +44,75 @@ public class MultiViewData {
 		dsizeCenter = new Point2D();
 	}
 	
-	public MultiViewData(InputStream is) throws IOException {
-		flags = Util.readCalibInfoInt(is);
-		carWidth = Util.readCalibInfoInt(is);
-		carLength = Util.readCalibInfoInt(is);
-		carHeight = Util.readCalibInfoInt(is);
-		carWheelBase = Util.readCalibInfoInt(is);
-		carTread = Util.readCalibInfoInt(is);
+	public MultiViewData(ByteBuffer buf) throws IOException {
+		flags = buf.getInt();
+		carWidth = buf.getInt();
+		carLength = buf.getInt();
+		carHeight = buf.getInt();
+		carWheelBase = buf.getInt();
+		carTread = buf.getInt();
 		
-		maskFfov = Util.readCalibInfoFloat(is);
-		maskRfov = Util.readCalibInfoFloat(is);
-		maskBlend = Util.readCalibInfoFloat(is);
-		maskColor = Util.readCalibInfoInt(is);
-		maskWidth = Util.readCalibInfoInt(is);
-		maskType = Util.readCalibInfoInt(is);
+		maskFfov = buf.getFloat();
+		maskRfov = buf.getFloat();
+		maskBlend = buf.getFloat();
+		maskColor = buf.getInt();
+		maskWidth = buf.getInt();
+		maskType = buf.getInt();
 		
 		// mask car position
-		options[0] = Util.readCalibInfoFloat(is); // top
-		options[1] = Util.readCalibInfoFloat(is); // left
-		options[2] = Util.readCalibInfoFloat(is); // right
-		options[3] = Util.readCalibInfoFloat(is); // bottom
+		options[0] = buf.getFloat(); // top
+		options[1] = buf.getFloat(); // left
+		options[2] = buf.getFloat(); // right
+		options[3] = buf.getFloat(); // bottom
 		
-		mmPerPixel = Util.readCalibInfoFloat(is);
+		mmPerPixel = buf.getFloat();
 
-		offsetY = Util.readCalibInfoInt(is); // TODO 확인할 것. - 원본.
+		offsetY = buf.getInt(); // TODO 확인할 것. - 원본.
 
-		dsizeWidth = Util.readCalibInfoInt(is);
-		dsizeHeight = Util.readCalibInfoInt(is);
-		dsizeCenter.x = Util.readCalibInfoFloat(is);
-		dsizeCenter.y = Util.readCalibInfoFloat(is);
+		dsizeWidth = buf.getInt();
+		dsizeHeight = buf.getInt();
+		dsizeCenter.x = buf.getFloat();
+		dsizeCenter.y = buf.getFloat();
 		
-		offsetX = Util.readCalibInfoInt(is);
-		offsetY = Util.readCalibInfoInt(is);
-}
+		offsetX = buf.getInt();
+		offsetY = buf.getInt();
+	}
 
+	// FIXME
 	public static MultiViewData load(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);
-		DataInputStream dis = new DataInputStream(fis);
 		
 		MultiViewData data = new MultiViewData();
 
-		data.flags = TLVFormat.readInt(dis);
-		data.carWidth = TLVFormat.readInt(dis);
-		data.carLength = TLVFormat.readInt(dis);
-		data.carHeight = TLVFormat.readInt(dis);
-		data.carTread = TLVFormat.readInt(dis);
-		data.carWheelBase = TLVFormat.readInt(dis);
+		data.flags = TLVFormat.readTLV(fis).getIntValue();
+		data.carWidth = TLVFormat.readTLV(fis).getIntValue();
+		data.carLength = TLVFormat.readTLV(fis).getIntValue();
+		data.carHeight = TLVFormat.readTLV(fis).getIntValue();
+		data.carTread = TLVFormat.readTLV(fis).getIntValue();
+		data.carWheelBase = TLVFormat.readTLV(fis).getIntValue();
 		
-		data.maskFfov = TLVFormat.readFloat(dis);
-		data.maskRfov = TLVFormat.readFloat(dis);
-		data.maskBlend = TLVFormat.readFloat(dis);
-		data.maskWidth = TLVFormat.readInt(dis);
-		data.maskType = TLVFormat.readInt(dis);
+		data.maskFfov = TLVFormat.readTLV(fis).getFloatValue();
+		data.maskRfov = TLVFormat.readTLV(fis).getFloatValue();
+		data.maskBlend = TLVFormat.readTLV(fis).getFloatValue();
+		data.maskWidth = TLVFormat.readTLV(fis).getIntValue();
+		data.maskType = TLVFormat.readTLV(fis).getIntValue();
 		
-		data.dsizeWidth = TLVFormat.readInt(dis);
-		data.dsizeHeight = TLVFormat.readInt(dis);
-		data.dsizeCenter.x = TLVFormat.readFloat(dis);
-		data.dsizeCenter.y = TLVFormat.readFloat(dis);
+		data.dsizeWidth = TLVFormat.readTLV(fis).getIntValue();
+		data.dsizeHeight = TLVFormat.readTLV(fis).getIntValue();
+		data.dsizeCenter.x = TLVFormat.readTLV(fis).getFloatValue();
+		data.dsizeCenter.y = TLVFormat.readTLV(fis).getFloatValue();
 		
-		data.mmPerPixel = TLVFormat.readFloat(dis);
+		data.mmPerPixel = TLVFormat.readTLV(fis).getFloatValue();
 		
-		data.offsetX = TLVFormat.readInt(dis);
-		data.offsetY = TLVFormat.readInt(dis);
+		data.offsetX = TLVFormat.readTLV(fis).getIntValue();
+		data.offsetY = TLVFormat.readTLV(fis).getIntValue();
 
-	    dis.close();
+	    fis.close();
 		
 		return data;
 	}
 	
+	// FIXME
 	public void store(String path) throws IOException {
 		FileOutputStream fos = new FileOutputStream(path);
 		DataOutputStream dos = new DataOutputStream(fos);

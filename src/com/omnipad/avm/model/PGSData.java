@@ -1,11 +1,8 @@
 package com.omnipad.avm.model;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-
-import com.omnipad.avm.calib.Util;
 
 public class PGSData {
 	public float tread;
@@ -42,12 +39,11 @@ public class PGSData {
 		rearAxle = 0;
 	}
 
-	public PGSData(InputStream is) throws IOException {
-		coordType = Util.readCalibInfoInt(is);
-		line = Util.readCalibInfoInt(is);
+	public PGSData(ByteBuffer buf) throws IOException {
+		coordType = buf.getInt();
+		line = buf.getInt();
 		
-		ByteBuffer buffer = ByteBuffer.allocate(60);
-		is.read(buffer.array());
+		ByteBuffer buffer = ByteBuffer.wrap(buf.array(), buf.position(), 60);
 		
 		IntBuffer intBuffer = buffer.asIntBuffer();
 		

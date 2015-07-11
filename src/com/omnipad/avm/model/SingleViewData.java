@@ -1,15 +1,13 @@
 package com.omnipad.avm.model;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import com.omnipad.avm.TLVFormat;
 import com.omnipad.avm.calib.Const;
-import com.omnipad.avm.calib.Util;
 
 public class SingleViewData {
 	public int flags;
@@ -42,65 +40,66 @@ public class SingleViewData {
 	public SingleViewData() {
 	}
 
-	public SingleViewData(InputStream is) throws IOException {
-		flags = Util.readCalibInfoInt(is);
-		w = Util.readCalibInfoFloat(is);
-		vx = Util.readCalibInfoFloat(is);
-		vy = Util.readCalibInfoFloat(is);
-		tx = Util.readCalibInfoFloat(is);
-		ty = Util.readCalibInfoFloat(is);
-		rot = Util.readCalibInfoFloat(is);
-		sx = Util.readCalibInfoFloat(is);
-		sy = Util.readCalibInfoFloat(is);
-		shx = Util.readCalibInfoFloat(is);
-		shy = Util.readCalibInfoFloat(is);
-		secWidth = Util.readCalibInfoFloat(is);
+	public SingleViewData(ByteBuffer buf) throws IOException {
+		flags = buf.getInt();
+		w = buf.getFloat();
+		vx = buf.getFloat();
+		vy = buf.getFloat();
+		tx = buf.getFloat();
+		ty = buf.getFloat();
+		rot = buf.getFloat();
+		sx = buf.getFloat();
+		sy = buf.getFloat();
+		shx = buf.getFloat();
+		shy = buf.getFloat();
+		secWidth = buf.getFloat();
 
-		offsetY = Util.readCalibInfoInt(is); // TODO 확인 요. 원본 확인.
-		dsizeWidth = Util.readCalibInfoInt(is);
-		dsizeHeight = Util.readCalibInfoInt(is);
-	    dsizeCenter.x = Util.readCalibInfoFloat(is);
-	    dsizeCenter.y = Util.readCalibInfoFloat(is);
-		offsetX = Util.readCalibInfoInt(is);
-		offsetY = Util.readCalibInfoInt(is);
+		offsetY = buf.getInt(); // TODO 확인 요. 원본 확인.
+		dsizeWidth = buf.getInt();
+		dsizeHeight = buf.getInt();
+	    dsizeCenter.x = buf.getFloat();
+	    dsizeCenter.y = buf.getFloat();
+		offsetX = buf.getInt();
+		offsetY = buf.getInt();
 		
 		flags |= Const.HV_ENABLE;
 	}
 
+	// FIXME
 	public static SingleViewData load(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);
-		DataInputStream dis = new DataInputStream(fis);
 		
 		SingleViewData data = new SingleViewData();
 
-		data.flags = TLVFormat.readInt(dis);
-		data.w = TLVFormat.readFloat(dis);
-		data.vx = TLVFormat.readFloat(dis);
-		data.vy = TLVFormat.readFloat(dis);
-		data.tx = TLVFormat.readFloat(dis);
-		data.ty = TLVFormat.readFloat(dis);
-		data.rot = TLVFormat.readFloat(dis);
-		data.sx = TLVFormat.readFloat(dis);
-		data.sy = TLVFormat.readFloat(dis);
-		data.shx = TLVFormat.readFloat(dis);
-		data.shy = TLVFormat.readFloat(dis);
-		data.secWidth = TLVFormat.readFloat(dis);
+		data.flags = TLVFormat.readTLV(fis).getIntValue();
+		data.w = TLVFormat.readTLV(fis).getFloatValue();
+		data.vx = TLVFormat.readTLV(fis).getFloatValue();
+		data.vy = TLVFormat.readTLV(fis).getFloatValue();
+		data.tx = TLVFormat.readTLV(fis).getFloatValue();
+		data.ty = TLVFormat.readTLV(fis).getFloatValue();
+		data.rot = TLVFormat.readTLV(fis).getFloatValue();
+		data.sx = TLVFormat.readTLV(fis).getFloatValue();
+		data.sy = TLVFormat.readTLV(fis).getFloatValue();
+		data.shx = TLVFormat.readTLV(fis).getFloatValue();
+		data.shy = TLVFormat.readTLV(fis).getFloatValue();
+		data.secWidth = TLVFormat.readTLV(fis).getFloatValue();
 
-		data.dsizeWidth = TLVFormat.readInt(dis);
-		data.dsizeHeight = TLVFormat.readInt(dis);
-		data.offsetX = TLVFormat.readInt(dis);
-		data.offsetY = TLVFormat.readInt(dis);
-		data.carWidth = TLVFormat.readInt(dis);
-		data.carLength = TLVFormat.readInt(dis);
+		data.dsizeWidth = TLVFormat.readTLV(fis).getIntValue();
+		data.dsizeHeight = TLVFormat.readTLV(fis).getIntValue();
+		data.offsetX = TLVFormat.readTLV(fis).getIntValue();
+		data.offsetY = TLVFormat.readTLV(fis).getIntValue();
+		data.carWidth = TLVFormat.readTLV(fis).getIntValue();
+		data.carLength = TLVFormat.readTLV(fis).getIntValue();
 
 	    data.dsizeCenter.x = data.dsizeWidth * 0.5f;
 	    data.dsizeCenter.y = data.dsizeHeight * 0.5f;
 
-	    dis.close();
+	    fis.close();
 		
 		return data;
 	}
 	
+	// FIXME
 	public void store(String path) throws IOException {
 		FileOutputStream fos = new FileOutputStream(path);
 		DataOutputStream dos = new DataOutputStream(fos);
