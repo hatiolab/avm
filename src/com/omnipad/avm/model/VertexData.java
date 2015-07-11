@@ -1,9 +1,9 @@
 package com.omnipad.avm.model;
 
-import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import com.omnipad.avm.calib.Const;
 import com.omnipad.avm.calib.Util;
 
 
@@ -60,9 +60,13 @@ public class VertexData {
 		return (width * bitCount / 8 + 3) & ~3;
 	}
 	
-	public VertexData(int width, int height, int resolution, int nCh) {
-		int xLength = (width  / resolution) +  ((width % resolution > 0) ? 1:0);
-		int yLength = (height / resolution) +  ((height % resolution > 0) ? 1:0);	
+	public VertexData(int viewWidth, int viewHeight, int resolution, int nCh) {
+		setCameraParams(viewWidth, viewHeight, resolution, nCh);
+	}
+	
+	public void setCameraParams(int viewWidth, int viewHeight, int resolution, int nCh) {
+		int xLength = (viewWidth  / resolution) +  ((viewWidth % resolution > 0) ? 1:0);
+		int yLength = (viewHeight / resolution) +  ((viewHeight % resolution > 0) ? 1:0);	
 		int nCount = xLength * yLength;
 
 		this.vertexCount	=  nCount * (POSITION_DATA_SIZE_IN_ELEMENTS + MSK_DATA_SIZE_IN_ELEMENTS + LUT_DATA_SIZE_IN_ELEMENTS * nCh);
@@ -73,8 +77,8 @@ public class VertexData {
 		this.resolution	= resolution;
 		this.nCh			= nCh;
 
-		this.viewWidth	= width;
-		this.viewHeight	= height;
+		this.viewWidth	= viewWidth;
+		this.viewHeight	= viewHeight;
 		this.enable		= false;
 	}
 
@@ -92,19 +96,12 @@ public class VertexData {
 			// camera data
 			case TAG_VBO_PARAM:
 				vbo.camId = Util.readCalibInfoInt(is);
-				vbo.viewWidth = Util.readCalibInfoInt(is);
-				vbo.viewHeight = Util.readCalibInfoInt(is);
-				vbo.nCh = Util.readCalibInfoInt(is);
-				vbo.resolution = Util.readCalibInfoInt(is);
-				
-				int xLength = (vbo.viewWidth  / vbo.resolution) +  ((vbo.viewWidth % vbo.resolution > 0) ? 1:0);
-				int yLength = (vbo.viewHeight / vbo.resolution) +  ((vbo.viewHeight % vbo.resolution > 0) ? 1:0);	
-				int nCount = xLength * yLength;
+				int viewWidth = Util.readCalibInfoInt(is);
+				int viewHeight = Util.readCalibInfoInt(is);
+				int nCh = Util.readCalibInfoInt(is);
+				int resolution = Util.readCalibInfoInt(is);
 
-				vbo.vertexCount	=  nCount * (POSITION_DATA_SIZE_IN_ELEMENTS + MSK_DATA_SIZE_IN_ELEMENTS + LUT_DATA_SIZE_IN_ELEMENTS * vbo.nCh);
-				vbo.nStride		=  (POSITION_DATA_SIZE_IN_ELEMENTS + MSK_DATA_SIZE_IN_ELEMENTS + LUT_DATA_SIZE_IN_ELEMENTS * vbo.nCh) * BYTES_PER_FLOAT;
-
-				vbo.indexCount	= (xLength*2*(yLength-1) + 2*( yLength - 2 ));		
+				vbo.setCameraParams(viewWidth, viewHeight, resolution, nCh);
 
 				break;
 			case TAG_VBO_DATA:
@@ -143,5 +140,133 @@ public class VertexData {
 		is.close();
 		
 		return vbo;
+	}
+	
+	public void build(Point2D[] lookupTable, int videoWidth, int videoHeight, int screenWidth, int screenHeight, int offsetX, int offsetY) {
+		float[] vertices	= this.vertices;
+		short[] indices 	= this.indices;
+		int viewWidth		= this.viewWidth;
+		int viewHeight		= this.viewHeight;
+		int nCh				= this.nCh;
+		int camId			= this.camId;
+		int resolution		= this.resolution;
+
+		float viewOffsetX	= (float)offsetX * 2.f;// / (float)viewWidth;
+		float viewOffsetY	= (float)offsetY * 2.f;// / (float)viewHeight;
+
+		float screenRatioX	= (float)viewWidth/(float)screenWidth;
+		float screenRatioY 	= (float)viewHeight/(float)screenHeight;
+
+		float screenOffsetX = (float)(viewWidth - screenWidth   + viewOffsetX)/ (float)screenWidth;
+		float screenOffsetY = (float)(viewHeight - screenHeight + viewOffsetY)/ (float)screenHeight;
+
+		float normTexX		= 1.f/(float)videoWidth;
+		float normTexY		= 1.f/(float)videoHeight;
+
+		int xLength			= (viewWidth  / resolution) +  ((viewWidth%resolution > 0) ? 1:0);
+		int yLength			= (viewHeight / resolution) +  ((viewHeight%resolution > 0) ? 1:0);	
+
+		// Texture postion
+		float xOffset, yOffset;
+		
+		switch(camId) {
+		case Const.CAM_FRONT:
+			xOffset = 0.0f;
+			yOffset = 0.0f;
+			break;
+		case Const.CAM_REAR:
+			xOffset = 0.5f;
+			yOffset = 0.0f;
+			break;
+		case Const.CAM_LEFT:
+			xOffset = 0.0f;
+			yOffset = 0.5f;
+			break;
+		case Const.CAM_RIGHT:
+			xOffset = 0.5f;
+			yOffset = 0.5f;
+			break;
+		default:
+			xOffset = 0.0f;
+			yOffset = 0.0f;
+		}
+
+		// Building the Position data
+		int x, y, i;
+		int nX, nY, nTri, nIndex;
+		int viewSize = viewWidth * viewHeight;
+		Point2D[] line = new Point2D[xLength];
+		
+		nIndex = 0;
+
+		for( y = 0; y < yLength; y++ ) {
+
+			float yRatio = (float)y / (float)(yLength -1);
+
+			nY = y * resolution;
+			if(nY > viewHeight - 1) nY = viewHeight - 1;
+			float yPos = ((((float)nY) * 2.f/(float)viewHeight - 1.f)) * screenRatioY;
+
+			System.arraycopy(lookupTable, nY*viewWidth, line, 0, xLength); 
+
+			for( x = 0; x < xLength; x++ ){
+
+				float xRatio = (float)x / (float)(xLength-1);
+
+				nX = x * resolution;
+				if(nX > viewWidth - 1) nX = viewWidth - 1;
+				float xPos = ((((float)nX) * 2.f/(float)viewWidth  - 1.f)) * screenRatioX ;
+
+				// Position
+				vertices[nIndex++] =   xPos  + screenOffsetX;
+				vertices[nIndex++] =  -(yPos + screenOffsetY);
+				vertices[nIndex++] = 0.f;
+
+				// Normalize the normal
+				//pVertices[nIndex].nx = 1.f;
+				//pVertices[nIndex].ny = 1.f;
+				//pVertices[nIndex].nz = 1.f;
+
+				// mask
+				vertices[nIndex++] = xRatio;
+				vertices[nIndex++] = yRatio;
+
+				// lut
+				vertices[nIndex++] = line[nX].x  * normTexX + xOffset;
+				vertices[nIndex++] = line[nX].y  * normTexY + yOffset;
+
+				// Add some lut.
+				if( nCh == 4 ) {
+					vertices[nIndex++] = line[nX+viewSize].x  * normTexX + 0.5f;
+					vertices[nIndex++] = line[nX+viewSize].y  * normTexY + 0.0f;
+
+					vertices[nIndex++] = line[nX+viewSize * 2].x  * normTexX + 0.0f;
+					vertices[nIndex++] = line[nX+viewSize * 2].y  * normTexY + 0.5f;
+
+					vertices[nIndex++] = line[nX+viewSize * 3].x * normTexX + 0.5f;
+					vertices[nIndex++] = line[nX+viewSize * 3].y * normTexY + 0.5f;
+				}
+			}
+		}
+		
+		// The next step is to link all of these vertices together, using the index buffer.
+		nIndex = 0;
+
+		for (y = 0; y < yLength - 1; y++) {
+			if (y > 0) {
+				// Degenerate begin: repeat first vertex
+				indices[nIndex++] = (short) (y * xLength);
+			}
+			for (x = 0; x < xLength; x++) {
+				// One part of the strip
+				indices[nIndex++] = (short) ((y * xLength) + x);
+				indices[nIndex++] = (short) (((y + 1) * xLength) + x);
+			}
+			if (y < yLength - 2) {
+				// Degenerate end: repeat last vertex
+				indices[nIndex++] = (short) (((y + 1) * xLength) + (xLength - 1));
+			}
+		}
+		
 	}
 }
