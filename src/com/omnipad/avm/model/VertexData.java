@@ -1,6 +1,5 @@
 package com.omnipad.avm.model;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -175,16 +174,14 @@ public class VertexData {
 		buffer = ByteBuffer.allocate(this.vertexCount * 4);
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		
-		for (int i = 0; i < this.vertexCount; i++)
-			buffer.putFloat(this.vertices[i]);
+		buffer.asFloatBuffer().put(this.vertices);
 
 		TLVFormat.write(os, TAG_VBO_DATA, buffer.array());
 
 		buffer = ByteBuffer.allocate(this.indexCount * 2);
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-		for (int i = 0; i < this.indexCount; i++)
-			buffer.putShort(this.indices[i]);
+		buffer.asShortBuffer().put(this.indices);
 
 		TLVFormat.write(os, TAG_IBO_DATA, buffer.array());
 
