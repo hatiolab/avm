@@ -22,12 +22,39 @@ public class VertexDataTest {
 
 	private void load(String path) throws IOException {
 		VertexData vbo = VertexData.load(path);
-		for(int i = 0;i < 100;i++)
-			System.out.println("Index " + i + " : " + vbo.indices[i]);
-		for(int i = 0;i < 100;i++)
-			System.out.println("Vertex " + i + " : " + vbo.vertices[i]);
-		for(int i = 0;i < 100;i++)
-			System.out.println("Mask " + i + " : " + vbo.viewMask[i]);
+//		for(int i = 0;i < 100;i++)
+//			System.out.println("Index " + i + " : " + vbo.indices[i]);
+//		for(int i = 0;i < 100;i++)
+//			System.out.println("Vertex " + i + " : " + vbo.vertices[i]);
+//		for(int i = 0;i < 100;i++)
+//			System.out.println("Mask " + i + " : " + vbo.viewMask[i]);
+
+//		for(int i = 0;i < vbo.vertexCount / 7;i++) {
+//			System.out.println("A : " + vbo.vertices[i * 7 + 4] + ", B : " + vbo.vertices[i * 7 + 5]);
+//		}
+		
+		int x = 0;
+		int i00 = 0;
+		int i01 = 0;
+		int i10 = 0;
+		int i11 = 0;
+		for(int i = 0;i < vbo.viewMask.length / 3;i++) {
+//		for(int i = 0;i < 100;i++) {
+			byte r = vbo.viewMask[i * 3];
+			byte g = vbo.viewMask[i * 3 + 1];
+			byte b = vbo.viewMask[i * 3 + 2];
+			if(r == 0 && g == 0)
+				i00++;
+			else if(r == 0 && (g == 1 || g == -1))
+				i01++;
+			else if((r == 1 || r == -1) && g == 0)
+				i10++;
+			else if((r == 1 || r == -1) && (g == 1 || g == -1))
+				i11++;
+				
+//			System.out.println("[" + x++ + "("+i+")] R : " + vbo.viewMask[i * 3] + ", G : " + vbo.viewMask[i * 3 + 1] + ", B : " + vbo.viewMask[i * 3 + 2]);
+			System.out.println("[00-" + i00 + " 01-" + i01 + " 10-" + i10 + " 11-" + i11);
+		}
 
 		vbo.save(tempPath);
 		
@@ -45,16 +72,16 @@ public class VertexDataTest {
 	public void test() {
 		try {
 			load("resource/avmfv.vbo");
-			load("resource/avmfv.vbo");
-			load("resource/avmls.vbo");
-			load("resource/Frontfv.vbo");
-			load("resource/Frontvw.vbo");
-			load("resource/LeftFrontvw.vbo");
-			load("resource/Leftvw.vbo");
-			load("resource/Rearfv.vbo");
-			load("resource/Rearvw.vbo");
-			load("resource/RightFrontvw.vbo");
-			load("resource/Rightvw.vbo");
+//			load("resource/avmfv.vbo");
+//			load("resource/avmls.vbo");
+//			load("resource/Frontfv.vbo");
+//			load("resource/Frontvw.vbo");
+//			load("resource/LeftFrontvw.vbo");
+//			load("resource/Leftvw.vbo");
+//			load("resource/Rearfv.vbo");
+//			load("resource/Rearvw.vbo");
+//			load("resource/RightFrontvw.vbo");
+//			load("resource/Rightvw.vbo");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
